@@ -9,3 +9,48 @@ tasks:
       zef install . --force-install
       zef install App::Prove6 --force-install
       prove6 -I. t/ it/
+    followup:
+      -
+        name: intergration_tests
+  -
+    name: intergration_tests
+    language: Raku
+    init: |
+      "{cache_root_dir()}/command.raku".IO.slurp({config()<code>});
+      run_task "smoke_test", %(
+        command => "{cache_root_dir()}/command.raku"
+      )
+    subtasks:
+      -
+        name: smoke_test
+        language: Bash
+        code: |
+          echo "run: ["
+          cat $command
+          echo "]"
+          raku $command &
+          echo "====="
+          echo "GET 127.0.0.1:8080"
+          echo "====="
+          curl 127.0.0.1:8080 -s -D -
+          kill $!
+    code: |
+      say "Finished";
+    hub:
+      language: Raku
+      code: |
+        my $code;
+        my @examples;
+        my $fh = open("source/README.md"); 
+        for $fh.lines -> $i { 
+          if $i ~~ /^ "```raku"/ ^fff^  $i ~~ /^ "```"/ { 
+            $code ~= "$i\n"
+          } elsif ($i ~~ /^ "```raku"/ or $fh.eof) { 
+            push @examples, %( 
+              config => %( code => $code ) 
+            ) if $code; 
+            $code = ""; 
+          }   
+        }
+        $fh.close();
+        update_state %( list => @examples );
