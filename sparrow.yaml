@@ -22,7 +22,8 @@ tasks:
       );
       CATCH {
            default {
-               set_stdout($*ERR.message);
+               my $err = .Str;
+               set_stdout($err);
            }
       }        
     subtasks:
