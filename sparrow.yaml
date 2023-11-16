@@ -57,4 +57,4 @@ tasks:
           }   
         }
         $fh.close();
-        update_state %( list => @examples );
+        update_state(%( list => @examples ));
