@@ -34,12 +34,14 @@ tasks:
           echo "run: ["
           cat $command
           echo "]"
-          raku $command &
+          nohup raku $command &
+          pid=$!
+          echo "pid: $pid"
           echo "====="
-          echo "GET 127.0.0.1:8080"
+          echo "GET localhost:8080"
           echo "====="
-          curl 127.0.0.1:8080 -s -D -
-          kill $!
+          curl localhost:8080 -s -D -
+          kill $pid
     code: |
       say "Finished";
     hub:
