@@ -53,4 +53,9 @@ tasks:
           }   
         }
         $fh.close();
+        CATCH {
+             default {
+                 set_stdout($*ERR.message);
+             }
+        }        
         update_state %( list => @examples );
