@@ -31,6 +31,7 @@ tasks:
         name: smoke_test
         language: Bash
         code: |
+          set -x
           echo "run: ["
           cat $command
           echo "]"
@@ -40,7 +41,7 @@ tasks:
           echo "====="
           echo "GET localhost:8080"
           echo "====="
-          curl localhost:8080 -s -D - -L
+          curl http://localhost:8080 -s -D - -L --verbose
           echo "====="
           kill $pid
     code: |
