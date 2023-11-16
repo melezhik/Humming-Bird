@@ -16,7 +16,7 @@ tasks:
     name: intergration_tests
     language: Raku
     init: |
-      "{cache_root_dir()}/command.raku".IO.slurp(config()<code>);
+      "{cache_root_dir()}/command.raku".IO.spurt(config()<code>);
       run_task "smoke_test", %(
         command => "{cache_root_dir()}/command.raku"
       );
