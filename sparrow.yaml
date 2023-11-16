@@ -41,6 +41,7 @@ tasks:
           echo "====="
           echo "GET localhost:8080"
           echo "====="
+          sleep 10
           curl http://localhost:8080 -s -D - -L --verbose
           echo "====="
           kill $pid
