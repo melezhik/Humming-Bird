@@ -35,7 +35,7 @@ tasks:
           echo "run: ["
           cat $command
           echo "]"
-          nohup raku $command &
+          nohup raku $command 1>&2 1>log.txt &
           pid=$!
           echo "pid: $pid"
           echo "====="
@@ -45,6 +45,8 @@ tasks:
           curl http://localhost:8080 -s -D - -L --verbose
           echo "====="
           kill $pid
+          echo "log:"
+          cat log.txt
     code: |
       say "Finished";
     hub:
