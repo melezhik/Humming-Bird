@@ -52,7 +52,7 @@ tasks:
           if $i ~~ /^ "```raku"/ ^fff^  $i ~~ /^ "```"/ { 
             $code ~= "$i\n"
           } elsif ($i ~~ /^ "```raku"/ or $fh.eof) { 
-            push @examples, %( config => %( code => $code ) ) if $code; 
+            @examples.push(%( config => %( code => $code ) )) if $code; 
             $code = ""; 
           }   
         }
