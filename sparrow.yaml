@@ -19,7 +19,12 @@ tasks:
       "{cache_root_dir()}/command.raku".IO.slurp({config()<code>});
       run_task "smoke_test", %(
         command => "{cache_root_dir()}/command.raku"
-      )
+      );
+      CATCH {
+           default {
+               set_stdout($*ERR.message);
+           }
+      }        
     subtasks:
       -
         name: smoke_test
@@ -46,16 +51,9 @@ tasks:
           if $i ~~ /^ "```raku"/ ^fff^  $i ~~ /^ "```"/ { 
             $code ~= "$i\n"
           } elsif ($i ~~ /^ "```raku"/ or $fh.eof) { 
-            push @examples, %( 
-              config => %( code => $code ) 
-            ) if $code; 
+            push @examples, %( config => %( code => $code ) ) if $code; 
             $code = ""; 
           }   
         }
         $fh.close();
-        CATCH {
-             default {
-                 set_stdout($*ERR.message);
-             }
-        }        
         update_state %( list => @examples );
