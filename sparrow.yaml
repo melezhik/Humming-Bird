@@ -40,7 +40,8 @@ tasks:
           echo "====="
           echo "GET localhost:8080"
           echo "====="
-          curl localhost:8080 -s -D -
+          curl localhost:8080 -s -D - -L
+          echo "====="
           kill $pid
     code: |
       say "Finished";
