@@ -29,6 +29,7 @@ tasks:
         name: smoke_test
         language: Bash
         code: |
+          echo "############################################# test_${cnt} ################################################"
           echo "run: ["
           cat $command
           echo "]"
