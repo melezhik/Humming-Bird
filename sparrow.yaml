@@ -15,23 +15,20 @@ tasks:
   -
     name: intergration_tests
     language: Raku
+    followup:
+      -
+        name: test_report
     init: |
       "{cache_root_dir()}/command.raku".IO.spurt(config()<code>);
       run_task "smoke_test", %(
-        command => "{cache_root_dir()}/command.raku"
+        command => "{cache_root_dir()}/command.raku",
+        cnt => config()<cnt>,
       );
-      CATCH {
-           default {
-               my $err = .Str;
-               set_stdout($err);
-           }
-      }        
     subtasks:
       -
         name: smoke_test
         language: Bash
         code: |
-          set -x
           echo "run: ["
           cat $command
           echo "]"
@@ -42,26 +39,42 @@ tasks:
           echo "GET localhost:8080"
           echo "====="
           sleep 10
-          curl http://localhost:8080 -s -D - -L --verbose
+          mkdir -p  $cache_root_dir/tests/
+          curl http://localhost:8080 -s -D - -L --verbose -f && touch $cache_root_dir/tests/$cnt.ok
           echo "====="
           kill $pid
           echo "log:"
           cat log.txt
     code: |
       say "Finished";
+      if "{cache_root_dir()}/tests/{config()<cnt>}.ok".IO ~~ :e {
+        say ">>> PASSED";
+        update_state(%( test => config()<cnt>, result => "PASSED" ))
+      } else {
+        say ">>> FAILED";
+        update_state(%( test => config()<cnt>, result => "FAILED" ))
+      }
     hub:
       language: Raku
       code: |
         my $code;
         my @examples;
-        my $fh = open("source/README.md"); 
+        my $fh = open("source/README.md");
+        my $cnt = 1;
         for $fh.lines -> $i { 
           if $i ~~ /^ "```raku"/ ^fff^  $i ~~ /^ "```"/ { 
             $code ~= "$i\n"
           } elsif ($i ~~ /^ "```raku"/ or $fh.eof) { 
-            @examples.push(%( config => %( code => $code ) )) if $code; 
+            @examples.push(%( config => %( code => $code, cnt => $cnt++ ) )) if $code; 
             $code = ""; 
           }   
         }
         $fh.close();
         update_state(%( list => @examples ));
+  -
+    name: test_report
+    language: Raku
+    code: |
+      for config()<parent><state><> -> $i {
+        say $i.perl
+      }        
