@@ -76,5 +76,5 @@ tasks:
     language: Raku
     code: |
       for config()<parent><state><> -> $i {
-        say $i.perl
+        say "test_{$i<test>} >>> {$i<result>}";
       }        
